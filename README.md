@@ -137,10 +137,7 @@ $$L = \text{BCE}(y, \hat{y}) + \text{Dice}(y, \hat{y})$$
 
 ## Pre-trained Models
 
-The `models/` directory contains pre-trained checkpoints:
-- `resnet50_unet_15.pth` - ResNet50-U-Net (15 epochs)
-- `resnet50_unet_20.pth` - ResNet50-U-Net (20 epochs)
-- `unet_30.pth` - Standard U-Net (30 epochs)
+Place the pretrained model inside models folder.
 
 ## Dataset Format
 
