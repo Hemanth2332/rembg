@@ -14,24 +14,36 @@ RemBG leverages modern deep learning techniques to automatically segment and rem
 - Configurable dataset and training parameters
 - GPU acceleration support (CUDA)
 
+## Example Results
+
+### Input & Output Comparison
+
+| Original Image | Segmentation Mask |
+|---|---|
+| ![Input Image](test_imgs/bill_gates_2.jpg) | ![Output Mask](output/masked_subject_2.png) |
+| ![Input Image](test_imgs/girl.jpg) | ![Output Mask](output/masked_subject_3.png) |
+
+The model successfully segments the foreground subject from the background, generating a precise binary mask suitable for background removal applications.
+
+
 ## Project Structure
 
 ```
-├── train.py                # Training script
-├── train.ipynb            # Training notebook
-├── inference.ipynb        # Inference notebook
-├── test.ipynb            # Testing and evaluation notebook
 ├── dataset/
-│   ├── original/         # Original input images
-│   └── mask/             # Corresponding binary masks
-├── models/               # Pre-trained model checkpoints
-├── output/               # Inference outputs
+│   ├── original/
+│   └── mask/
+├── models/              # Pre-trained model checkpoints
+├── output/              # Inference outputs
+├── test_imgs/           # Test images
 ├── src/
 │   ├── CONFIG.py        # Configuration parameters
 │   ├── model.py         # Model architectures
 │   ├── dataloader.py    # Dataset and DataLoader
 │   └── loss.py          # Loss functions
-└── test_imgs/           # Test images
+├── train.py             # Training script
+├── train.ipynb          # Training notebook
+├── inference.ipynb      # Inference notebook
+├── test.ipynb           # Testing and evaluation notebook
 ```
 
 ## Model Architectures
