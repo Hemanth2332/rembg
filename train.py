@@ -1,10 +1,10 @@
-from CONFIG import *
-from dataloader import BgRemovalDataset
-from model import Unet, ResNet50_UNet
+from src.CONFIG import *
+from src.dataloader import BgRemovalDataset
+from src.model import Unet, ResNet50_UNet
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from loss import LossFn
+from src.loss import LossFn
 
 if __name__ == "__main__":
 
