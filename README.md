@@ -124,6 +124,8 @@ Use the `inference.ipynb` notebook to:
 - Process images and generate background masks
 - Save segmentation results to `output/` directory
 
+It can do for image of any size.😁
+
 Example notebook usage:
 ```python
 from src.model import ResNet50_UNet
