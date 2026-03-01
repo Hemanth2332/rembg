@@ -187,8 +187,8 @@ Place the pretrained model inside models folder.
 
 - Recommended GPU: NVIDIA with 4GB+ VRAM
 - Batch size: 4 (adjust based on available memory)
-- Training time: ~2-4 hours per epoch on standard GPUs
-- Inference: ~100ms per image (512×512)
+- Training time: ~6-7 minutes per epoch on standard GPUs with 4GB VRAM
+- Inference: ~300ms per image (512×512)
 
 ## Future Improvements
 
