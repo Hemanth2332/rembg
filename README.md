@@ -32,19 +32,27 @@ The model successfully segments the foreground subject from the background, gene
 ├── dataset/
 │   ├── original/
 │   └── mask/
-├── models/              # Pre-trained model checkpoints
-├── output/              # Inference outputs
-├── test_imgs/           # Test images
+|
+├── test_imgs/           
+├── notebooks/           
+│   ├── train.ipynb      
+│   ├── inference.ipynb  
+│   └── test.ipynb       
+|
+├── models/              
+├── output/              
+|
 ├── src/
-│   ├── CONFIG.py        # Configuration parameters
-│   ├── model.py         # Model architectures
-│   ├── dataloader.py    # Dataset and DataLoader
-│   └── loss.py          # Loss functions
-├── train.py             # Training script
-├── train.ipynb          # Training notebook
-├── inference.ipynb      # Inference notebook
-├── test.ipynb           # Testing and evaluation notebook
-├── main.py              # Gradio interface
+│   ├── CONFIG.py        
+│   ├── model.py         
+│   ├── dataloader.py    
+│   └── loss.py
+|
+├── train.py             
+├── gradio_app.py
+|
+├── README.md
+└── requirements.txt
 ```
 
 ## Model Architectures
