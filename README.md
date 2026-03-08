@@ -44,6 +44,7 @@ The model successfully segments the foreground subject from the background, gene
 ├── train.ipynb          # Training notebook
 ├── inference.ipynb      # Inference notebook
 ├── test.ipynb           # Testing and evaluation notebook
+├── main.py              # Gradio interface
 ```
 
 ## Model Architectures
@@ -137,6 +138,12 @@ model.eval()
 # Process images...
 ```
 
+### Gradio Interface
+
+```bash
+python main.py
+```
+
 ## Loss Function
 
 The training uses a hybrid loss combining two complementary functions:
@@ -192,11 +199,12 @@ Place the pretrained model inside models folder.
 
 ## Future Improvements
 
+- [x] Post-processing refinement (morphological operations)
+- [x] Add Gradio support
 - [ ] Inference optimization with ONNX export
 - [ ] Additional data augmentation strategies
 - [ ] Multi-GPU training support
-- [ ] Post-processing refinement (morphological operations)
-- [ ] Real-time video processing
+
 
 ## License
 
