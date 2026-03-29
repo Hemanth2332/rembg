@@ -5,6 +5,8 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from src.loss import LossFn
+from torch.utils.tensorboard import SummaryWriter
+import torchvision
 
 if __name__ == "__main__":
 
@@ -19,6 +21,27 @@ if __name__ == "__main__":
         batch_size=BATCH_SIZE,
         shuffle=True,
     )
+
+    test_dataset = BgRemovalDataset(
+        real_img_path=TEST_REAL_IMG_PATH,
+        mask_img_path=TEST_MASK_IMG_PATH,
+        crop_size=512,
+        is_train=False
+    )
+
+    test_dataloader = DataLoader(
+        test_dataset,
+        batch_size=16, # User requested 16 images
+        shuffle=False,
+    )
+
+    writer = SummaryWriter(LOG_DIR)
+    
+    # Get a fixed batch of test images for visualization
+    test_batch_iter = iter(test_dataloader)
+    test_imgs, test_masks = next(test_batch_iter)
+    test_imgs = test_imgs.to(DEVICE)
+    test_masks = test_masks.to(DEVICE)
     
     if MODEL_TYPE == "unet":
         print("Using UNet model...")
@@ -50,6 +73,8 @@ if __name__ == "__main__":
         avg_loss = 0.0
         print("No checkpoint found, starting from scratch")
 
+    global_step = start_epoch * len(train_dataloader)
+
     for epoch in range(start_epoch,EPOCHS):
 
         loss_list = []
@@ -74,16 +99,44 @@ if __name__ == "__main__":
             loss_list.append(loss.detach().item())
             loader.set_postfix(loss=loss.detach().item())
 
+            writer.add_scalar("Loss/train", loss.item(), global_step)
+
+            if global_step % 50 == 0:
+                model.eval()
+                with torch.no_grad():
+                    with torch.amp.autocast('cuda'):
+                        test_preds = model(test_imgs)
+                        # Optionally calculate validation loss here if needed
+                        # val_loss = loss_fn(test_preds, test_masks)
+                        # writer.add_scalar("Loss/val", val_loss.item(), global_step)
+
+                    # Create a grid for visualization
+                    # Original Image, Ground Truth Mask, Prediction
+                    
+                    # Ensure predictions are in [0, 1]
+                    test_preds = torch.sigmoid(test_preds)
+                    
+                    # Convert to 3-channel for visualization if they are 1-channel
+                    vis_masks = test_masks.repeat(1, 3, 1, 1)
+                    vis_preds = test_preds.repeat(1, 3, 1, 1)
+                    
+                    # Combine into a single batch for grid: [Img1, Mask1, Pred1, Img2, Mask2, Pred2, ...]
+                    combined = torch.cat([test_imgs, vis_masks, vis_preds], dim=0)
+                    grid = torchvision.utils.make_grid(combined, nrow=8)
+                    writer.add_image(f"Visualization/Epoch_{epoch+1}", grid, global_step)
+                model.train()
+
+            global_step += 1
+
         avg_loss = sum(loss_list) / len(loss_list)
         print("Epoch {} average loss: {}\n".format(epoch+1, avg_loss))
 
-        if (epoch + 1) % 5 == 0:
-            checkpoint = {
-                "epoch": epoch + 1,
-                "model_state_dict": model.state_dict(),
-                "optimizer_state_dict": optimizer.state_dict(),
-                "scaler_state_dict": scaler.state_dict(),
-                "loss": avg_loss,
-            }
-            print("Saving checkpoint for epoch {}...".format(epoch+1))
-            torch.save(checkpoint, 'models/resnet50_unet_{}.pth'.format(epoch+1))
+        checkpoint = {
+            "epoch": epoch + 1,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "scaler_state_dict": scaler.state_dict(),
+            "loss": avg_loss,
+        }
+        print("Saving checkpoint for epoch {}...".format(epoch+1))
+        torch.save(checkpoint, 'dut-models/resnet50_unet_{}.pth'.format(epoch+1))

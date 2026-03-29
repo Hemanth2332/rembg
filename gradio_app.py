@@ -2,7 +2,7 @@ import gradio as gr
 from src.inference_utils import load_model, process_image
 
 # Initialize Model
-model = load_model()
+model = load_model(checkpoint_path="dut-models/resnet50_unet_1.pth")
 
 def gradio_wrapper(input_img):
     """Wrapper for process_image to be used in Gradio interface."""

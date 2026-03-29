@@ -10,7 +10,10 @@ from src.model import ResNet50_UNet
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def load_model(checkpoint_path='models/resnet50_unet_20.pth'):
-    """Loads the ResNet50_UNet model with pre-trained weights."""
+    """
+    Loads the ResNet50_UNet model with pre-trained weights.
+    """
+    
     model = ResNet50_UNet(in_ch=IN_CH, out_ch=OUT_CH, pretrained=False).to(DEVICE)
     try:
         checkpoint = torch.load(checkpoint_path, map_location=DEVICE)
@@ -21,7 +24,9 @@ def load_model(checkpoint_path='models/resnet50_unet_20.pth'):
     return model
 
 def remove_artifacts(mask):
-    """Keeps only largest connected component from a binary mask."""
+    """
+    Keeps only largest connected component from a binary mask.
+    """
     mask_bin = (mask > 0).astype(np.uint8)
     num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(mask_bin, connectivity=8)
     if num_labels <= 1:
@@ -31,7 +36,9 @@ def remove_artifacts(mask):
     return cleaned_mask
 
 def process_image(model, input_img):
-    """Processes an input image array and returns the predicted mask and foreground image."""
+    """
+    Processes an input image array and returns the predicted mask and foreground image.
+    """
     if input_img is None:
         return None, None
     

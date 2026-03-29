@@ -1,3 +1,6 @@
 dataset/*
 models/*
 __pycache__
+dut-dataset
+dut-models/
+logs/

@@ -6,14 +6,15 @@ from torch.utils.data import Dataset
 import torchvision.transforms as T
 import torchvision.transforms.functional as F
 
-from CONFIG import MASK_IMG_PATH, REAL_IMG_PATH
+from src.CONFIG import MASK_IMG_PATH, REAL_IMG_PATH
 
 
 class BgRemovalDataset(Dataset):
-    def __init__(self, real_img_path, mask_img_path, crop_size=512):
+    def __init__(self, real_img_path, mask_img_path, crop_size=512, is_train=True):
         self.real_images = sorted(glob.glob(os.path.join(real_img_path, "*.jpg")))
         self.mask_images = sorted(glob.glob(os.path.join(mask_img_path, "*.png")))
         self.crop_size = crop_size
+        self.is_train = is_train
         self.to_tensor = T.ToTensor()
 
         # Color augmentations (image only)
@@ -42,6 +43,13 @@ class BgRemovalDataset(Dataset):
                             interpolation=F.InterpolationMode.NEAREST)
 
             w, h = image.size
+        
+        if not self.is_train:
+            # For validation, use center crop or resize to crop_size directly
+            # Here we follow the logic of resizing to crop_size if we're in validation
+            image = F.resize(image, (th, tw))
+            mask = F.resize(mask, (th, tw), interpolation=F.InterpolationMode.NEAREST)
+            return image, mask
 
         i = random.randint(0, h - th)
         j = random.randint(0, w - tw)
@@ -81,11 +89,12 @@ class BgRemovalDataset(Dataset):
         image = Image.open(self.real_images[idx]).convert("RGB")
         mask = Image.open(self.mask_images[idx]).convert("L")
 
-        # Random Crop
+        # Random Crop (or Resize if validation)
         image, mask = self.random_crop(image, mask)
 
-        # Augmentations
-        image, mask = self.augment(image, mask)
+        # Augmentations (only during training)
+        if self.is_train:
+            image, mask = self.augment(image, mask)
 
         # To Tensor
         image = self.to_tensor(image)
